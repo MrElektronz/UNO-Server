@@ -26,7 +26,7 @@ public class GameSession {
     private ArrayList<GameInstance.Player> players;
     private int turn;
     private Direction direction;
-    private ArrayList<Card> deck;
+    private Stack<Card> deck;
     private Stack<Card> cardStack;
     private int currentPlayerIndex;
     public GameSession(){
@@ -36,7 +36,6 @@ public class GameSession {
         currentPlayerIndex = 0;
         direction = Direction.CLOCKWISE;
         fillDeck();
-        layCardFromDeck();
     }
 
     public GameSession(ArrayList<GameInstance.Player> players){
@@ -46,7 +45,6 @@ public class GameSession {
         cardStack = new Stack<>();
         direction = Direction.CLOCKWISE;
         fillDeck();
-        layCardFromDeck();
     }
 
     public GameInstance.Player getCurrentPlayer(){
@@ -69,7 +67,7 @@ public class GameSession {
      * 19 yellow cards from 0-9
      */
     private void fillDeck(){
-        deck = new ArrayList<>();
+        deck = new Stack<>();
         Card.CardColor currentColor = Card.CardColor.BLUE;
         deck.add(new Card(currentColor,0));
         for(int i = 1; i<10;i++){
@@ -147,6 +145,17 @@ public class GameSession {
         Card card = deck.get(0);
         deck.remove(0);
         cardStack.add(card);
+    }
+
+    /**
+     * deals 7 cards to every player, only needs to be called at the beginning of the game
+     */
+    public void dealSevenCards(){
+        for(GameInstance.Player p: players){
+            for(int i = 0; i< 7;i++) {
+                p.getCards().add(deck.pop());
+            }
+        }
     }
 
     public Card getCurrentCard(){

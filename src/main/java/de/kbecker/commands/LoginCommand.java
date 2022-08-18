@@ -27,6 +27,7 @@ public class LoginCommand extends Command{
             if(password.equals(user.getPassword())){
                 code = 1;
                 response.addProperty("sessionID", SessionManager.getInstance().addNewSession(user.getUsername(),wt));
+                response.addProperty("username", jobj.get("username").getAsString());
             }
             response.addProperty("message", message);
             response.addProperty("code", code);

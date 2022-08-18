@@ -92,6 +92,16 @@ public class GameInstance {
 		message.addProperty("currentPlayer", game.getCurrentPlayerIndex());
 
 		JsonArray playerList = new JsonArray();
+		for(Player p : game.getPlayers()) {
+			JsonObject playerData = new JsonObject();
+			playerData.addProperty("username", p.getUsername());
+			JsonArray cardList = new JsonArray();
+			for(Card c : p.getCards()) {
+				cardList.add(c.serialize());
+			}
+			playerData.add("cards", cardList);
+			playerList.add(playerData);
+		}
 		message.add("players", playerList);
 		//Also add players as list
 		notifyAllClients(new Gson().toJson(message));
@@ -205,6 +215,8 @@ public class GameInstance {
 	public void startGame() {
 		if (state == GameState.Lobby) {
 			state = GameState.Ingame;
+			game.layCardFromDeck();
+			game.dealSevenCards();
 		}
 	}
 
