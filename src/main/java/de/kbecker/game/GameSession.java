@@ -60,7 +60,7 @@ public class GameSession {
     }
 
     /**
-     * Create a new deck and fill it with all 108 cards, which are:
+     * Creates a new deck and fills it with all 108 cards, which are:
      * 19 blue cards from 0-9
      * 19 red cards from 0-9
      * 19 green cards from 0-9

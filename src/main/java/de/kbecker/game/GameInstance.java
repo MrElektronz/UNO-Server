@@ -149,15 +149,6 @@ public class GameInstance {
 
 			game.getPlayers().add(new Player(sessionID));
 			sm.getSession(sessionID).setCurrentGame(this);
-
-				// Sending new lobby status to all clients, because Base64 doesn't include ';',
-				// we can use it as a separator
-			/*try {
-				notifyAllClients("!LobbyUpdate;" + Serializer.toString(getLobbyData()));
-			} catch (IOException e) {
-					// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
 			return true;
 			}
 		return false;

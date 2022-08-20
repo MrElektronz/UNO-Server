@@ -1,7 +1,6 @@
 package de.kbecker.serializable;
 
 import de.kbecker.main.ServerMain;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -18,6 +17,9 @@ public class User implements Serializable {
     @Column(unique = true)
     private int id;
 
+    /* Did not chose username as primary key, because: 1. changing the username would mean changing the primary key, seems to be messy,
+     * 2. use a default incremental primary key seems to be less error prone.
+     */
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -50,6 +52,11 @@ public class User implements Serializable {
         return id;
     }
 
+
+    /**
+     * Stores 'this' user in the database
+     * @return 0-> if already exists, -2-> if name/password too long/short, 1-> if successful, -1-> if any other error occurred
+     */
     public int storeToDatabase(){
 
         if(User.readFromDatabase(username) != null){
@@ -79,7 +86,11 @@ public class User implements Serializable {
     }
 
 
-
+    /**
+     * Can't use session.get() here, because the users need to be filtered by their username and not id
+     * @param username of the user
+     * @return User object from database
+     */
     public static User readFromDatabase(String username){
         EntityManager em = ServerMain.getEntityManagerFactory().createEntityManager();
         TypedQuery<User> tq = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);

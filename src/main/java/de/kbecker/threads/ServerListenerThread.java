@@ -16,6 +16,7 @@ import java.net.Socket;
  */
 public class ServerListenerThread extends Thread {
 
+	// TODO: Change the connection later on to SSLSockets for secure communication (also needed for the client)
 	private ServerSocket serverSocket;
 
 	/**

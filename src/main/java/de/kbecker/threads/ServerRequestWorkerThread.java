@@ -32,8 +32,10 @@ public class ServerRequestWorkerThread extends Thread {
 	private HashMap<String, Command> commandMap;
 
 	/**
-	 * 
-	 * @param client socket to client who send the message
+	 * Initiates all commands for this thread, does create a new command instance
+	 * for every thread in order to avoid multiple threads from accessing the same method of the same
+	 * object at the same time.
+	 * @param client socket to client who sent the message
 	 */
 	public ServerRequestWorkerThread(Socket client) {
 		this.client = client;

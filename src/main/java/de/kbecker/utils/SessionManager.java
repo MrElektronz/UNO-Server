@@ -104,10 +104,6 @@ public class SessionManager {
 		Session s = sessions.get(id);
 		sessions.remove(id);
 
-		// if in gameinstance
-		//if (s.getCurrentGame() != null) {
-			//GameFinder.getInstance().removePlayerFromLobby(id);
-		//}
 	}
 
 	/**
