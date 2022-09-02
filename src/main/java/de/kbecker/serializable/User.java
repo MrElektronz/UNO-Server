@@ -17,8 +17,8 @@ public class User implements Serializable {
     @Column(unique = true)
     private int id;
 
-    /* Did not chose username as primary key, because: 1. changing the username would mean changing the primary key, seems to be messy,
-     * 2. use a default incremental primary key seems to be less error prone.
+    /**
+     * TODO: Set username as primary key and remove id, because it's unique as well
      */
     @Column(nullable = false, unique = true)
     private String username;

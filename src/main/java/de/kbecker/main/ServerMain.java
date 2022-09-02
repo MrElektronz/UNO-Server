@@ -1,7 +1,6 @@
 package de.kbecker.main;
 
 import com.google.gson.Gson;
-import de.kbecker.serializable.User;
 import de.kbecker.threads.ServerListenerThread;
 import de.kbecker.utils.ConfigManager;
 

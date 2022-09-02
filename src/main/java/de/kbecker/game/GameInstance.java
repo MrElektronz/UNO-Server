@@ -3,6 +3,7 @@ package de.kbecker.game;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -57,6 +58,7 @@ public class GameInstance {
 		return false;
 	}
 
+
 	public static GameInstance getGameInstanceByID(String gameID){
 		for(GameInstance game : games){
 			if(game.gameId.equals(gameID)){
@@ -77,6 +79,26 @@ public class GameInstance {
 		return null;
 	}
 
+	public void drawCard(String sessionID){
+		game.drawCard(sessionID);
+	}
+
+	/**
+	 *
+	 * @param sessionID
+	 * @return 'true' if successful, 'false' otherwise
+	 */
+	public boolean chooseColor(String sessionID, String color){
+		if (getCurrentPlayer().getSessionID().equals(sessionID)) {
+			return game.setColorForWildcard(sessionID,color);
+		}
+		return false;
+	}
+
+	public boolean setCard(String sessionID, Card card){
+		return game.setCard(sessionID, card);
+	}
+
 	public void sendLobbyUpdate() {
 		JsonObject message = new JsonObject();
 		message.addProperty("task", "lobbyUpdate");
@@ -89,8 +111,11 @@ public class GameInstance {
 		message.addProperty("task", "gameUpdate");
 		message.add("currentCard", game.getCurrentCard().serialize());
 		message.addProperty("turn", game.getTurn());
+		//Handle wildcard set
+		if(game.isWaitingForWildCard()){//if(game.getCurrentCard().getColor() == Card.CardColor.BLACK){
+			message.addProperty("event", "wildCard");
+		}
 		message.addProperty("currentPlayer", game.getCurrentPlayerIndex());
-
 		JsonArray playerList = new JsonArray();
 		for(Player p : game.getPlayers()) {
 			JsonObject playerData = new JsonObject();
@@ -206,7 +231,7 @@ public class GameInstance {
 	public void startGame() {
 		if (state == GameState.Lobby) {
 			state = GameState.Ingame;
-			game.layCardFromDeck();
+			game.layCardFromDeck(true);
 			game.dealSevenCards();
 		}
 	}
@@ -305,7 +330,28 @@ public class GameInstance {
 		public String getSessionID() {
 			return sessionID;
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Player player = (Player) o;
+
+			if (!Objects.equals(sessionID, player.sessionID)) return false;
+			if (!Objects.equals(username, player.username)) return false;
+			return Objects.equals(cards, player.cards);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = sessionID != null ? sessionID.hashCode() : 0;
+			result = 31 * result + (username != null ? username.hashCode() : 0);
+			result = 31 * result + (cards != null ? cards.hashCode() : 0);
+			return result;
+		}
 	}
+
 
 	/**
 	 * 

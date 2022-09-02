@@ -48,6 +48,11 @@ public class ServerRequestWorkerThread extends Thread {
 		commandMap.put("join", new JoinCommand(this));
 		commandMap.put("leave", new LeaveCommand(this));
 		commandMap.put("startGame", new StartGameCommand(this));
+		commandMap.put("drawCard", new DrawCardCommand(this));
+		commandMap.put("setCard", new SetCardCommand(this));
+		commandMap.put("chooseColor", new ChooseColorCommand(this));
+
+
 		try {
 			in = new DataInputStream(client.getInputStream());
 			out = new DataOutputStream(client.getOutputStream());
