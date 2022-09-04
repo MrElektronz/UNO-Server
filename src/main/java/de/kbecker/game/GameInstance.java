@@ -58,6 +58,9 @@ public class GameInstance {
 		return false;
 	}
 
+	public GameSession getGame() {
+		return game;
+	}
 
 	public static GameInstance getGameInstanceByID(String gameID){
 		for(GameInstance game : games){
@@ -79,9 +82,10 @@ public class GameInstance {
 		return null;
 	}
 
-	public void drawCard(String sessionID){
-		game.drawCard(sessionID);
+	public boolean drawCard(String sessionID){
+		return game.drawCard(sessionID);
 	}
+
 
 	/**
 	 *
@@ -106,15 +110,27 @@ public class GameInstance {
 		notifyAllClients(new Gson().toJson(message));
 	}
 
+	public void endGame(String winner){
+		game.endGame(winner);
+		sendGameUpdate();
+	}
+
 	public void sendGameUpdate() {
 		JsonObject message = new JsonObject();
 		message.addProperty("task", "gameUpdate");
 		message.add("currentCard", game.getCurrentCard().serialize());
 		message.addProperty("turn", game.getTurn());
 		//Handle wildcard set
-		if(game.isWaitingForWildCard()){//if(game.getCurrentCard().getColor() == Card.CardColor.BLACK){
+		if(game.isWaitingForWildCard()){
 			message.addProperty("event", "wildCard");
 		}
+		if(game.getWildCardColor() != null){
+			message.addProperty("wildCardColor", game.getWildCardColor().name());
+		}
+		if((game.getWinner() != null && !game.getWinner().isEmpty())){
+			message.addProperty("winner", game.getWinner());
+		}
+
 		message.addProperty("currentPlayer", game.getCurrentPlayerIndex());
 		JsonArray playerList = new JsonArray();
 		for(Player p : game.getPlayers()) {
@@ -130,6 +146,14 @@ public class GameInstance {
 		message.add("players", playerList);
 		//Also add players as list
 		notifyAllClients(new Gson().toJson(message));
+
+		//Reset players
+		if((game.getWinner() != null && !game.getWinner().isEmpty())) {
+			for (GameInstance.Player p : game.getPlayers()) {
+				p.getSession().setCurrentGame(null);
+			}
+			game.getPlayers().clear();
+		}
 	}
 
 	/**
@@ -180,18 +204,14 @@ public class GameInstance {
 	}
 
 	/**
-	 * CAUTION: This method does not delete the game instance when it's empty,
-	 * please use GameFinder.getInstance().removePlayerFromLobby(sessionID) for
-	 * this. Removes the player from the game
 	 * 
 	 * @param sessionID of the user
 	 */
 	public void removePlayer(String sessionID) {
+
 		for (int i = 0; i < game.getPlayers().size(); i++) {
 				if (game.getPlayers().get(i).getSessionID().equals(sessionID)) {
-					//game.removePlayer(players.get(i).getUsername());
 					game.getPlayers().remove(i);
-
 				}
 		}
 		SessionManager.Session s = sm.getSession(sessionID);
@@ -199,6 +219,21 @@ public class GameInstance {
 			s.setCurrentGame(null);
 		}
 
+		if(state.equals(GameState.Ingame)){
+			//Delete game session if empty
+			if(game.getPlayers().size()<2){
+				String winner = game.getPlayers().isEmpty() ? "X" : game.getPlayers().get(0).getUsername();
+				game.endGame(winner);
+				games.remove(this);
+			}else{
+				//Update game session data
+				if(game.getCurrentPlayerIndex()>game.getPlayers().size()-1){
+					System.out.println("Skip this turn");
+					game.nextTurn();
+				}
+			}
+			sendGameUpdate();
+		}
 	}
 
 
@@ -281,7 +316,7 @@ public class GameInstance {
 	 * @author KBeck
 	 *
 	 */
-	class Player {
+	public class Player {
 		private String sessionID;
 		private String username;
 		private ArrayList<Card> cards;

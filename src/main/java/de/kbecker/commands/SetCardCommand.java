@@ -21,10 +21,8 @@ public class SetCardCommand extends Command{
         Card card = Card.deserialize(jobj.get("card").getAsJsonObject());
 
         GameInstance instance = GameInstance.getGameInstanceOfPlayer(sessionID);
-        if(instance != null){
-            if(instance.setCard(sessionID, card)){
-                instance.sendGameUpdate();
-            }
+        if(instance != null && instance.setCard(sessionID, card)){
+            instance.sendGameUpdate();
         }
         return null;
     }

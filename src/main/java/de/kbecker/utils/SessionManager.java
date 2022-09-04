@@ -102,6 +102,7 @@ public class SessionManager {
 	 */
 	public void delSession(String id) {
 		Session s = sessions.get(id);
+		s.getCurrentGame().removePlayer(id);
 		sessions.remove(id);
 
 	}

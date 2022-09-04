@@ -22,6 +22,7 @@ public class GameSession {
     private int currentPlayerIndex;
     private boolean waitingForWildCard;
     private Card.CardColor wildCardColor;
+    private String winner;
 
     public GameSession(){
         waitingForWildCard = false;
@@ -47,8 +48,9 @@ public class GameSession {
         return players.get(currentPlayerIndex);
     }
 
-    public void addPlayer(GameInstance.Player p){
 
+    public Card.CardColor getWildCardColor() {
+        return wildCardColor;
     }
 
     public ArrayList<GameInstance.Player> getPlayers() {
@@ -127,16 +129,22 @@ public class GameSession {
         shuffle();
     }
 
+    public String getWinner() {
+        return winner;
+    }
 
     /**
      * Gets called whenever a turn ends and the next one should begin
      */
-    private void nextTurn(){
+    public void nextTurn(){
         turn++;
         System.out.println("Turn: "+turn);
-        currentPlayerIndex = turn%players.size();
-        if(direction<0){
-            currentPlayerIndex = players.size()-(currentPlayerIndex)-1;
+        currentPlayerIndex+=direction;
+
+        if(currentPlayerIndex<0){
+            currentPlayerIndex = players.size()-1;
+        }else if(currentPlayerIndex > players.size()-1){
+            currentPlayerIndex = 0;
         }
         System.out.println("CurrentPlayerIndex: "+currentPlayerIndex);
 
@@ -202,7 +210,11 @@ public class GameSession {
                     if(card.getType().equals(Card.CardType.SKIP)){
                         nextTurn();
                     }else if(card.getType().equals(Card.CardType.REVERSE)){
-                        direction*=-1;
+                        if(players.size()>2) {
+                            direction *= -1;
+                        }else{
+                            nextTurn();
+                        }
                     }
                     // Next turn
                     nextTurn();
@@ -214,10 +226,18 @@ public class GameSession {
 
                 p.getCards().remove(card);
                 cardStack.add(card);
+                if(p.getCards().isEmpty()){
+                    endGame(p.getUsername());
+                }
                 return true;
             }
         }
+
         return false;
+    }
+
+    public void endGame(String winner){
+        this.winner = winner;
     }
 
     public boolean setColorForWildcard(String sessionID, String color){
@@ -261,9 +281,11 @@ public class GameSession {
         return waitingForWildCard;
     }
 
-    public void drawCard(String sessionID){
+
+
+    public boolean drawCard(String sessionID){
         for(GameInstance.Player p: players) {
-            if(p.getSessionID().equals(sessionID)){
+            if(p.getSessionID().equals(sessionID) && currentPlayerIndex==players.indexOf(p)){
                 p.getCards().add(deck.pop());
 
                 // Sort already used cards back into the deck
@@ -274,8 +296,10 @@ public class GameSession {
                     }
                     shuffle();
                 }
+                return true;
             }
         }
+        return false;
         }
 
     public Card getCurrentCard(){
