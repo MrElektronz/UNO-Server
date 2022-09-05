@@ -15,7 +15,6 @@ public class QuitCommand extends Command{
 
     @Override
     public JsonObject exec(JsonObject jobj) {
-        String sessionID = jobj.get("sessionID").getAsString();
         JsonObject response = new JsonObject();
         return response;
     }

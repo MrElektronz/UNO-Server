@@ -76,10 +76,8 @@ public class ServerRequestWorkerThread extends Thread {
 
 				if (jsonReceived.isJsonObject()) {
 					//Call 'exec' method of corresponding command object
-					System.out.println(jsonReceived.getAsJsonObject().get("command").getAsString());
 					JsonObject response = commandMap.get(jsonReceived.getAsJsonObject().get("command").getAsString()).exec(jsonReceived.getAsJsonObject());
 					if(response != null){
-						System.out.println("send: "+response.toString());
 						out.writeUTF(new Gson().toJson(response));
 					}
 				}

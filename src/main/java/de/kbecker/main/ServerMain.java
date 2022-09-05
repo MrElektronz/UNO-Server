@@ -14,7 +14,6 @@ import java.io.IOException;
 public class ServerMain {
 
     private static int port;
-    private static Gson gson;
     private static ServerListenerThread listenerThread;
     private static EntityManagerFactory entityManagerFactory;
     public static void main(String[] args) {
@@ -22,7 +21,6 @@ public class ServerMain {
         entityManagerFactory = Persistence.createEntityManagerFactory("UNOServer");
 
 
-        gson = new Gson();
         try {
             listenerThread = new ServerListenerThread(port);
             listenerThread.start();

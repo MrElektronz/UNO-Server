@@ -15,7 +15,6 @@ public class ChooseColorCommand extends Command{
 
     @Override
     public JsonObject exec(JsonObject jobj) {
-        JsonObject message = new JsonObject();
         String sessionID = jobj.get("sessionID").getAsString();
         GameInstance instance = GameInstance.getGameInstanceOfPlayer(sessionID);
         if(instance != null){

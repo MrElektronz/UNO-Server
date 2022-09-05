@@ -25,7 +25,6 @@ public class JoinCommand extends Command{
         GameInstance lobby = GameInstance.getGameInstanceByID(jobj.get("lobbyID").getAsString());
         int code = -1;
         if(lobby == null){
-            System.out.println("game with "+jobj.get("lobbyID").getAsString()+" is null");
             response.addProperty("code",code);
             return response;
         }

@@ -138,18 +138,6 @@ public class SessionManager {
 		return sessions.containsKey(sessionID);
 	}
 
-	/**
-	 * accepts the ping of a client which is determined to see if a client is still
-	 * connected to the server
-	 * 
-	 * @param sessionID the ping was send from
-	 */
-	public void acceptPing(String sessionID) {
-		if (sessions.containsKey(sessionID)) {
-			sessions.get(sessionID).updateLastTimeSeen();
-		}
-
-	}
 
 	/**
 	 * useful function to print details about each session
@@ -206,28 +194,6 @@ public class SessionManager {
 		}
 	}
 
-	/**
-	 * checks every x seconds if every session is still active
-	 * 
-	 * @param difference the max difference in seconds between lastTimeSeen(last
-	 *                   ping) of Client and now, if exceeded the session will be
-	 *                   removed
-	 */
-	public void checkForTimeouts(int difference) {
-		Object[] keys = sessions.keySet().toArray();
-		Instant end = Instant.now();
-		for (int i = 0; i < sessions.size(); i++) {
-			Session s = sessions.get(keys[i]);
-			Duration dur = Duration.between(s.getLastTimeSeen(), end);
-			if (dur.compareTo(Duration.ofSeconds(difference)) > 0) {
-
-				// remove session
-				delSession((String) keys[i]);
-				printSessions();
-			}
-
-		}
-	}
 
 	/**
 	 * 

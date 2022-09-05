@@ -34,15 +34,6 @@ public class GameSession {
         fillDeck();
     }
 
-    public GameSession(ArrayList<GameInstance.Player> players){
-        waitingForWildCard = false;
-        turn = 0;
-        this.players = players;
-        currentPlayerIndex = 0;
-        cardStack = new Stack<>();
-        direction = 1;
-        fillDeck();
-    }
 
     public GameInstance.Player getCurrentPlayer(){
         return players.get(currentPlayerIndex);
@@ -138,7 +129,6 @@ public class GameSession {
      */
     public void nextTurn(){
         turn++;
-        System.out.println("Turn: "+turn);
         currentPlayerIndex+=direction;
 
         if(currentPlayerIndex<0){
@@ -146,7 +136,6 @@ public class GameSession {
         }else if(currentPlayerIndex > players.size()-1){
             currentPlayerIndex = 0;
         }
-        System.out.println("CurrentPlayerIndex: "+currentPlayerIndex);
 
     }
 
@@ -240,11 +229,10 @@ public class GameSession {
         this.winner = winner;
     }
 
-    public boolean setColorForWildcard(String sessionID, String color){
+    public boolean setColorForWildcard(String color){
         if(waitingForWildCard){
             waitingForWildCard = false;
             //green = 0x008000ff, yellow = 0xffff00ff, red = 0xff0000ff, blue = 0x0000ffff
-            System.out.println("Color: "+color);
             //TODO: Color logic
             switch(color){
                 case "0x008000ff":

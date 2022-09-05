@@ -21,7 +21,6 @@ public class HostCommand extends Command{
         JsonObject response = new JsonObject();
         response.addProperty("task", "lobbyUpdate");
         if(GameInstance.getGameInstanceOfPlayer(sessionID) != null){
-            System.out.println(GameInstance.getGameInstanceOfPlayer(sessionID).getGameID());
             response.addProperty("code",0);
             return response;
         }

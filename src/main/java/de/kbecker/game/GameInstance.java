@@ -94,7 +94,7 @@ public class GameInstance {
 	 */
 	public boolean chooseColor(String sessionID, String color){
 		if (getCurrentPlayer().getSessionID().equals(sessionID)) {
-			return game.setColorForWildcard(sessionID,color);
+			return game.setColorForWildcard(color);
 		}
 		return false;
 	}
@@ -110,10 +110,6 @@ public class GameInstance {
 		notifyAllClients(new Gson().toJson(message));
 	}
 
-	public void endGame(String winner){
-		game.endGame(winner);
-		sendGameUpdate();
-	}
 
 	public void sendGameUpdate() {
 		JsonObject message = new JsonObject();
@@ -228,36 +224,12 @@ public class GameInstance {
 			}else{
 				//Update game session data
 				if(game.getCurrentPlayerIndex()>game.getPlayers().size()-1){
-					System.out.println("Skip this turn");
 					game.nextTurn();
 				}
 			}
 			sendGameUpdate();
 		}
 	}
-
-
-
-
-
-
-
-
-
-	/**
-	 * 
-	 * @param sessionID of the user
-	 * @return true if player is in lobby, false if not
-	 */
-	public boolean containsPlayer(String sessionID) {
-		for (int i = 0; i < game.getPlayers().size(); i++) {
-			if (game.getPlayers().get(i).getSessionID().equals(sessionID)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 
 
 	/**
@@ -269,16 +241,6 @@ public class GameInstance {
 			game.layCardFromDeck(true);
 			game.dealSevenCards();
 		}
-	}
-
-
-	/**
-	 * 
-	 * @return true if gamestate is either ingame or it is lobby, but there are
-	 *         already 4 people joined
-	 */
-	public boolean isFull() {
-		return game.getPlayers().size() >= SLOTS;
 	}
 
 	/**
